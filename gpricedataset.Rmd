@@ -1,0 +1,58 @@
+---
+title: "Google Price Stock"
+author: "Ahmed Zakaria Ali"
+date: "`r Sys.Date()`"
+output:
+  word_document: default
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+rm(list=ls())
+knitr::opts_chunk$set(echo = FALSE)
+library(tidyverse)
+library(ggplot2)
+library(lubridate)
+```
+
+# Check Data set Structure
+
+```{r read_data,include=FALSE}
+gdata <- read.csv("./google_stock_data.csv")
+gdata$month_name <- lubridate::month(gdata$Date,label=TRUE)
+gdata$year <- lubridate::year(gdata$Date)
+str(gdata)
+summary(gdata)
+```
+
+##generate line chart for price & date
+
+```{r line_chart,echo=FALSE}
+ggplot(gdata,mapping=aes(x=Date,y=Open))+geom_point(color="green")
+```
+
+```{r assign_weights,echo=FALSE}
+gdata$propotional_weight_open_price <- gdata$Open/sum(gdata$Open)
+gdata$propotional_weight_close_price <- gdata$Close/sum(gdata$Close)
+gdata$propotional_weight_low_price <- gdata$Low/sum(gdata$Low)
+gdata$propotional_weight_high_price <- gdata$High/sum(gdata$High)
+gdata$weight_open_price_average <- round(weighted.mean(gdata$Open,gdata$propotional_weight_open_price),2)
+gdata$weighted_close_price_average <- round(weighted.mean(gdata$Close,gdata$propotional_weight_close_price))
+gdata$weighted_high_price_average <- round(weighted.mean(gdata$High,gdata$propotional_weight_high_price))
+gdata$weighted_low_price_average <- round(weighted.mean(gdata$Low,gdata$propotional_weight_low_price))
+summary(gdata$Open)
+iqr_open <- round(IQR(gdata$Open),2)
+iqr_close <- round(IQR(gdata$close),2)
+iqr_low <- round(IQR(gdata$Low))
+iqr_high <- round(IQR(gdata$High))
+data <- quantile(gdata$Open,probs=c(0.1,0.2,0.25,0.3,0.4,0.5,0.6,0.7,0.75,0.8,0.9))
+print(data)
+print(iqr_open)
+open_price_range <- range(gdata$Open)
+print(open_price_range)
+print(max(gdata$Open)-min(gdata$Open))
+open_price_var <- var(gdata$Open)
+print(open_price_var)
+cofficient_of_variation_open_price <- (mean(gdata$Open)/sd(gdata$Open))*100
+print(cofficient_of_variation_open_price)
+```
