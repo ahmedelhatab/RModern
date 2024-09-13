@@ -55,4 +55,18 @@ open_price_var <- var(gdata$Open)
 print(open_price_var)
 cofficient_of_variation_open_price <- (mean(gdata$Open)/sd(gdata$Open))*100
 print(cofficient_of_variation_open_price)
+## find pearson coefficient between open & close 
+pearson_cofficient_open_close <- cor(x=gdata$Open,y=gdata$Close,method="pearson")
+print(pearson_cofficient_open_close)
+freq_table <- table(gdata$Open)
+prob_table <- prop.table(freq_table)
+prob_table[15.68944]
 ```
+## find continency table 
+
+```{r continency table,echo=FALSE}
+aug_2020 <- gdata %>% filter(gdata$year==2020 & gdata$month_name=="Aug") %>% select(gdata$Open,gdata$Close,gdata$month_name)
+continency_table_aug_2020 <- table(aug_2020)
+
+```
+
